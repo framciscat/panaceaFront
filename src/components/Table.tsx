@@ -1,58 +1,85 @@
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button'
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material'
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Link} from "react-router-dom";
+
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EyeIcon from "@mui/icons-material/RemoveRedEye";
 
 export default function BasicTable(): JSX.Element {
+  // estado inicial con la actualización de datos
+  const [medicals, setMedicals] = useState<Array<any>>([]);
 
-  const [profiles, setProfiles] = useState<Array<any>>([]);
 
+  // Cada vez que nuestro código se renderiza, se va a ejecutar loadProfiles
   useEffect(() => {
-      loadProfiles();
-  },[]);
-
-  const loadProfiles = async() => {
-      const result = await axios.get("http://localhost:8080/profiles");
-      setProfiles(result.data);
+    loadMedicals();
+  }, []);
+  // Realizar solicitud http GET con axios y actualizar profiles con setProfiles
+  const loadMedicals = async () => {
+    const result = await axios.get("http://localhost:8080/medicals");
+    setMedicals(result.data);
   };
 
+  const deleteMedicals = async (id: number) => {
+    await axios.delete(`http://localhost:8080/medicals/${id}`);
+    loadMedicals();
+  };
   return (
+    <div>
       <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                  <TableRow>
+        <Table sx={{ maxWidth: 680 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell align="center">
+                <strong>Citas médicas</strong>
+              </TableCell>
+              <TableCell align="center">
+                <strong>Fármacos</strong>
+              </TableCell>
+              <TableCell align="center">
+                <strong>Sintomas y signos</strong>
+              </TableCell>
+              <TableCell align="center">
+                <strong>Acciones</strong>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {medicals.map((medical) => (
+              <TableRow>
+                <TableCell align="center">{medical.medicalApp}</TableCell>
+                <TableCell align="center">{medical.drugs}</TableCell>
+                <TableCell align="center">{medical.symptoms}</TableCell>
 
-                      <TableCell align="right">Alergias</TableCell>
-                      <TableCell align="right">Farmacos</TableCell>
-                      <TableCell align="right">Citas Médicas</TableCell>
-                    
-                      <TableCell align="right">Action</TableCell>
-                  </TableRow>
-              </TableHead>
-              <TableBody>
-                  {
-                      profiles.map((profile,index)=>(
-                          <TableRow key={index}>
-                              <TableCell align="right">{profile.firstName}</TableCell>
-                              <TableCell align="right">{profile.lastName}</TableCell>
-                              <TableCell align="right">{profile.email}</TableCell>
-                             
-                              <TableCell align="right">
-                                  <Button className="btn btn-primary mx-2">View</Button>
-                                  <Button className="btn btn-outline-primary mx-2">Edit</Button>
-                                  <Button className="btn btn-danger mx-2">Delete</Button>
-                              </TableCell>
-                          </TableRow>
-                      ))
-                  }
-              </TableBody>
-          </Table>
+                <TableCell align="right">
+                  <Button component={Link} to={`/edit/${medical.id}`}>
+                    <EditIcon />
+                  </Button>
+                  <Button
+                    className="btn btn-danger mx-2"
+                    onClick={() => deleteMedicals(medical.id)}
+                  >
+                    <DeleteIcon />
+                  </Button>
+                  <Link
+                    className="btn btn-primary mx-2"
+                    to={`/view/${medical.id}`}
+                  ></Link>
+
+                  <Button component={Link} to={`/view/${medical.id}`}>
+                    <EyeIcon />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </TableContainer>
+
+
+    </div>
   );
 }

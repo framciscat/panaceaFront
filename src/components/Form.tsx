@@ -1,71 +1,73 @@
 import { useState } from 'react';
 import axios from 'axios';
-import {useNavigate } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { FormControl, FormLabel, Container } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function Form() {
 
-let navigate=useNavigate()
+  let navigate = useNavigate();
 
-interface Profile {
-  firstName: string;
-  lastName: string;
-  email: string;
+interface Medical {
+  medicalApp: string;
+  drugs: string;
+  symptoms: string;
 }
-
-const [profile, setProfile] = useState<Profile>({
-  firstName: "",
-  lastName: "",
-  email: "",
+// valor inicial del estado profile y los datos que se van a actualizar con setprofile
+const [medicals, setMedicals] = useState<Medical>({
+  medicalApp: "",
+  drugs: "",
+  symptoms: "",
 });
 
-const { firstName, lastName, email } = profile;
+const { medicalApp, drugs, symptoms } = medicals;
 
+// Manejar cambios den input cuando se realice un evento de cambio 
 const onInputChange = (e: React.FormEvent<HTMLInputElement>) => {
-  setProfile({ ...profile, [e.currentTarget.name]: e.currentTarget.value });
+  setMedicals({ ...medicals, [e.currentTarget.name]: e.currentTarget.value });
 };
 
+//Manejar el envio del formulario con la solicitud POST de axios 
 const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-
-  await axios.post("http://localhost:8080/profiles", profile);
+  await axios.post(`http://localhost:8080/medicals`, medicals);
   navigate("/");
 };
 
   return (
- <Container>
+ <Container sx={{ background: 'white', width:'650px', borderRadius:'17px', marginBottom: '30px'}}>
     <form onSubmit={(e) => onSubmit(e)}>
     <FormControl>
       <h2>¿Qué desea agregar a su expediente?</h2>
-    <FormLabel htmlFor="Name" className="form-label">Alergias</FormLabel>
+    <FormLabel className="form-label">Citas médicas</FormLabel>
     <TextField type="text"
            className="form-control"
             placeholder="Agregar nombre"
-            name="firstName"
-            value={firstName}
+            name="medicalApp"
+            value={medicalApp}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => onInputChange(e)}
           />
    
-   <FormLabel htmlFor="Email" className="form-label">Fármacos</FormLabel>
+   <FormLabel  className="form-label">Fármacos</FormLabel>
     <TextField type="text"
            className="form-control"
             placeholder="Agregar medicamentos"
-            name="email"
-            value={email}
+            name="drugs"
+            value={drugs}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => onInputChange(e)}
           />
 
-<FormLabel htmlFor="lastName" className="form-label">Citas médicas</FormLabel>
+<FormLabel className="form-label">Sintomas y signos</FormLabel>
     <TextField type="text"
            className="form-control"
             placeholder="Agregar nombre"
-            name="lastName"
-            value={lastName}
+            name="symptoms"
+            value={symptoms}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => onInputChange(e)}
           />
 <br/>
-<Button type="submit" className="btn btn-outline" variant="contained">Agregar</Button>
+<Button type="submit" className="btn btn-outline" variant="contained"
+sx={{ mb:8 }}>Agregar</Button>
      </FormControl>
 </form>
 

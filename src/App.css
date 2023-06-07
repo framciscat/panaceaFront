@@ -6,5 +6,7 @@
 }
 
 body{
-  background: rgb(0, 68, 255);
+  background-image: url(../src/assets/blurry.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
 }

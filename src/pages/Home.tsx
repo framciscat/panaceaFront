@@ -1,12 +1,11 @@
-import Table from '../components/Table'
-import Form from '../components/Form'
+import Cards from "../components/Cards"
+import Navbar from '../components/NavBar'
 export default function Home() {
   return (
-    <>
-   <Form/>
-   <br/>
-<Table/>
+    <div>
+        <Navbar/>
 
-</>
+        <Cards/>
+    </div>
   )
 }
